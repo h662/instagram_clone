@@ -31,7 +31,7 @@ aws:
     bucket-name: ${AWS_BUCKET_NAME}
 
 server:
-  port: 8081
+  port: 8080
 
 frontend:
   url: ${FRONTEND_URL}
