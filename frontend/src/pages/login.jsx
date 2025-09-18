@@ -71,12 +71,20 @@ const Login = () => {
               required
             />
 
-            <Button className="mt-4" type="submit">
-              Sign up
+            <Button
+              className="mt-4"
+              type="submit"
+              disabled={
+                loading || !formData.emailOrUsername || !formData.password
+              }
+            >
+              {loading ? "Logging in..." : "Log in"}
             </Button>
           </form>
 
-          {/* <p className="text-red-500 text-xs text-center mt-4">error</p> */}
+          {error && (
+            <p className="text-red-500 text-xs text-center mt-4">{error}</p>
+          )}
 
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>

@@ -3,7 +3,7 @@ import { authService } from "../services/auth";
 
 const useAuthStore = create((set) => ({
   user: "",
-  isAuthenticated: "",
+  isAuthenticated: authService.isAuthenticated(),
   loading: false,
   error: null,
 
@@ -42,6 +42,15 @@ const useAuthStore = create((set) => ({
       });
       throw err;
     }
+  },
+
+  logout: () => {
+    authService.logout();
+    set({
+      user: null,
+      isAuthenticated: false,
+      error: null,
+    });
   },
 }));
 
