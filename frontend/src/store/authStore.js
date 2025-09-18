@@ -7,6 +7,24 @@ const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
+  login: async (userData) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await authService.login(userData);
+      set({
+        user: data.user,
+        isAuthenticated: true,
+        loading: false,
+      });
+      return data;
+    } catch (err) {
+      set({
+        loading: false,
+        error: err.response?.data?.message || "Login failed",
+      });
+    }
+  },
+
   register: async (userData) => {
     set({ loading: true, error: null });
     try {
@@ -16,6 +34,7 @@ const useAuthStore = create((set) => ({
         isAuthenticated: true,
         loading: false,
       });
+      return data;
     } catch (err) {
       set({
         loading: false,

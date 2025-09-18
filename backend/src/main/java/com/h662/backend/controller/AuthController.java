@@ -1,5 +1,6 @@
 package com.h662.backend.controller;
 
+import com.h662.backend.dto.AuthRequest;
 import com.h662.backend.dto.AuthResponse;
 import com.h662.backend.dto.RegisterRequest;
 import com.h662.backend.service.AuthService;
@@ -22,5 +23,12 @@ public class AuthController {
             @Valid @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> authenticate(
+            @Valid @RequestBody AuthRequest request
+    ) {
+        return ResponseEntity.ok(authService.authenticate(request));
     }
 }
