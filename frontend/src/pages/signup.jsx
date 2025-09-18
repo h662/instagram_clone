@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -7,6 +7,8 @@ import Input from "../components/ui/Input";
 import useAuthStore from "../store/authStore";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const { register } = useAuthStore();
 
   const [formData, setFormData] = useState({
@@ -20,6 +22,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       await register(formData);
+      navigate("/");
     } catch (err) {
       console.error(err);
     }

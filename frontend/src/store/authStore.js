@@ -10,8 +10,12 @@ const useAuthStore = create((set) => ({
   register: async (userData) => {
     set({ loading: true, error: null });
     try {
-      await authService.register(userData);
-      // set에 반영
+      const data = await authService.register(userData);
+      set({
+        user: data.user,
+        isAuthenticated: true,
+        loading: false,
+      });
     } catch (err) {
       set({
         loading: false,
