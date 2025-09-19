@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuthStore from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../components/common/Avatar";
+import usePostStore from "../store/postStore";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const { logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const { posts, fetchPosts } = usePostStore();
 
   const [activeTab, setActiveTab] = useState("home");
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -15,6 +17,16 @@ const Home = () => {
     logout();
     navigate("/login");
   };
+
+  const loadPosts = async () => {
+    fetchPosts();
+  };
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  useEffect(() => console.log(posts), [posts]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
@@ -63,7 +75,9 @@ const Home = () => {
           </div>
         </header>
 
-        <main>포스트 카드들</main>
+        <main className="pt-16 pb-20">
+          <div className="p-4">포스트카드</div>
+        </main>
 
         <nav className="bg-white border-t border-gray-300 fixed bottom-0 w-full max-w-[470px] z-40">
           <div className="flex items-center justify-around py-3">
@@ -155,7 +169,7 @@ const Home = () => {
               }
             >
               <Avatar
-                user={null}
+                user={user}
                 size="extra-small"
                 showBorder={activeTab === "profile"}
                 borderColor="black"
