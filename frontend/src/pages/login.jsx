@@ -42,6 +42,12 @@ const Login = () => {
     });
   };
 
+  const handleSocialLogin = (provider) => {
+    window.location.href = `${
+      import.meta.env.VITE_API_URL
+    }/oauth2/authorization/${provider}`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-purple-400 via-pink-500 to-grange-400">
       <div className="max-w-[420px] space-y-6 my-12">
@@ -93,14 +99,29 @@ const Login = () => {
           </div>
 
           <div className="space-y-4 mb-8">
-            <Button variant="secondary" icon={<FcGoogle className="w-6 h-6" />}>
+            <Button
+              variant="secondary"
+              icon={<FcGoogle className="w-6 h-6" />}
+              onClick={() => handleSocialLogin("google")}
+            >
               Continue with Google
             </Button>
 
-            <Button variant="secondary" icon={<FaGithub className="w-6 h-6" />}>
+            <Button
+              variant="secondary"
+              icon={<FaGithub className="w-6 h-6" />}
+              onClick={() => handleSocialLogin("github")}
+            >
               Continue with GitHub
             </Button>
           </div>
+
+          <Link
+            to="/forgot-password"
+            className="block text-center text-base text-gray-600 hover:text-pink-500 transition-colors mt-8"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl px-12 py-8 text-center">
