@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useAuthStore from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../components/common/Avatar";
-import usePostStore from "../store/postStore";
+import PostList from "../components/post/PostList";
+import CreatePost from "../components/post/CreatePost";
 
 const Home = () => {
   const navigate = useNavigate();
 
   const { user, logout } = useAuthStore();
-  const { posts, fetchPosts } = usePostStore();
 
   const [activeTab, setActiveTab] = useState("home");
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -17,16 +17,6 @@ const Home = () => {
     logout();
     navigate("/login");
   };
-
-  const loadPosts = async () => {
-    fetchPosts();
-  };
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  useEffect(() => console.log(posts), [posts]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
@@ -76,7 +66,9 @@ const Home = () => {
         </header>
 
         <main className="pt-16 pb-20">
-          <div className="p-4">포스트카드</div>
+          <div className="p-4">
+            <PostList />
+          </div>
         </main>
 
         <nav className="bg-white border-t border-gray-300 fixed bottom-0 w-full max-w-[470px] z-40">
@@ -179,8 +171,8 @@ const Home = () => {
         </nav>
 
         {showCreatePost && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            포스트 생성
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <CreatePost onClose={() => setShowCreatePost(false)} />
           </div>
         )}
       </div>

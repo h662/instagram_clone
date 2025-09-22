@@ -4,6 +4,8 @@ import com.h662.backend.dto.PostRequest;
 import com.h662.backend.dto.PostResponse;
 import com.h662.backend.entity.Post;
 import com.h662.backend.entity.User;
+import com.h662.backend.exception.ResourceNotFoundException;
+import com.h662.backend.exception.UnauthorizedException;
 import com.h662.backend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,5 +41,20 @@ public class PostService {
         authenticationService.getCurrentUser();
         Page<Post> posts = postRepository.findAllActive(pageable);
         return posts.map(PostResponse::fromEntity);
+    }
+
+    public PostResponse updatePost(Long postId, PostRequest request) {
+        User currentUser = authenticationService.getCurrentUser();
+        Post post = postRepository.findByIdAndNotDeleted(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        if (!post.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException("You are not authorized to update this post");
+        }
+
+        post.setContent(request.getContent());
+
+        post = postRepository.save(post);
+        return PostResponse.fromEntity(post);
     }
 }
