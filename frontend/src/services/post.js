@@ -12,6 +12,15 @@ const postService = {
     });
     return response.data;
   },
+
+  updatePost: async (postId, postData) => {
+    const response = await api.put(`/api/posts/${postId}`, postData);
+    return response.data;
+  },
+
+  deletePost: async (postId) => {
+    await api.delete(`/api/posts/${postId}`);
+  },
 };
 
 export default postService;

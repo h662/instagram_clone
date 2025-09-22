@@ -2,11 +2,13 @@ import { FiX } from "react-icons/fi";
 import Avatar from "../common/Avatar";
 import usePostStore from "../../store/postStore";
 import { useState } from "react";
+import useAuthStore from "../../store/authStore";
 
-const CreatePost = ({ onClose }) => {
-  const { createPost, loading, error } = usePostStore();
+const CreatePost = ({ post, onClose }) => {
+  const { createPost, updatePost, loading, error } = usePostStore();
+  const { user } = useAuthStore();
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(post ? post.content : "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,9 +22,13 @@ const CreatePost = ({ onClose }) => {
     }
 
     try {
-      await createPost({
-        content: content.trim(),
-      });
+      if (post) {
+        await updatePost(post.id, content.trim());
+      } else {
+        await createPost({
+          content: content.trim(),
+        });
+      }
 
       setContent("");
       onClose();
@@ -34,7 +40,9 @@ const CreatePost = ({ onClose }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Create New Post</h2>
+        <h2 className="text-xl font-semibold">
+          {post ? "Update Post" : "Create New Post"}
+        </h2>
         <button className="text-gray-500 hover:text-gray-700" onClick={onClose}>
           <FiX size={24} />
         </button>
@@ -42,7 +50,7 @@ const CreatePost = ({ onClose }) => {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="flex items-start space-x-3">
-          <Avatar size="medium" />
+          <Avatar user={user} size="medium" />
           <div className="flex-1">
             <textarea
               className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -71,7 +79,7 @@ const CreatePost = ({ onClose }) => {
           <button
             type="submit"
             className="px-6 py-2 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-            disabled={loading || !content.trim()}
+            disabled={loading || !content.trim() || content === post?.content}
           >
             {loading ? "Posting..." : "Post"}
           </button>

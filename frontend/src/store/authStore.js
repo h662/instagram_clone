@@ -22,6 +22,7 @@ const useAuthStore = create((set) => ({
         loading: false,
         error: err.response?.data?.message || "Login failed",
       });
+      throw err;
     }
   },
 

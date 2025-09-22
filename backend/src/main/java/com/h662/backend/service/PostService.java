@@ -57,4 +57,17 @@ public class PostService {
         post = postRepository.save(post);
         return PostResponse.fromEntity(post);
     }
+
+    public void deletePost(Long postId) {
+        User currentUser = authenticationService.getCurrentUser();
+        Post post = postRepository.findByIdAndNotDeleted(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+
+        if (!post.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException("You are not authorized to update this post");
+        }
+
+        post.setDeleted(true);
+        postRepository.save(post);
+    }
 }
