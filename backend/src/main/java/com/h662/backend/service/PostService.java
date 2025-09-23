@@ -28,6 +28,7 @@ public class PostService {
 
         Post post = Post.builder()
                 .content(request.getContent())
+                .imageUrl(request.getImageUrl())
                 .user(currentUser)
                 .deleted(false)
                 .build();

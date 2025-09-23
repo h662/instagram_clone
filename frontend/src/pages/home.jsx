@@ -20,14 +20,17 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
-      <div className="bg-red-100 max-w-[470px] w-full relative">
+      <div className="max-w-[470px] w-full relative">
         <header className="bg-white border-b border-gray-300 fixed top-0 max-w-[470px] w-full z-40">
           <div className="flex items-center justify-between px-4 py-4">
             <h1 className="text-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
               Instagram
             </h1>
             <div className="flex items-center space-x-4">
-              <button className="text-gray-700 hover:text-black transition-colors">
+              <button
+                className="text-gray-700 hover:text-black transition-colors"
+                onClick={() => setShowCreatePost(true)}
+              >
                 <svg
                   className="w-6 h-6"
                   fill="none"
