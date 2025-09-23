@@ -20,10 +20,4 @@ public class S3Controller {
         String url = s3Service.uploadFile(file, "h662/post"); // h662 <- 본인 이름으로 교체
         return ResponseEntity.ok(Map.of("url", url));
     }
-
-    @GetMapping("/presign")
-    public ResponseEntity<String> getPresignedUrl(@RequestParam String url) {
-        String presignedUrl = s3Service.generatePresignedUrl(url, 1);
-        return ResponseEntity.ok(presignedUrl);
-    }
 }

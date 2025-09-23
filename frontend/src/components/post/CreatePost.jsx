@@ -1,14 +1,65 @@
-import { FiX } from "react-icons/fi";
+import { FiImage, FiX } from "react-icons/fi";
 import Avatar from "../common/Avatar";
 import usePostStore from "../../store/postStore";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import useAuthStore from "../../store/authStore";
+import axios from "axios";
 
 const CreatePost = ({ post, onClose }) => {
   const { createPost, updatePost, loading, error } = usePostStore();
   const { user } = useAuthStore();
 
+  const fileInputRef = useRef(null);
+
   const [content, setContent] = useState(post ? post.content : "");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) return;
+
+    if (file.size > 5 * 1024 * 1024) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const size = Math.min(img.width, img.height);
+        canvas.width = size;
+        canvas.height = size;
+
+        const ctx = canvas.getContext("2d");
+        const x = (img.width - size) / 2;
+        const y = (img.height - size) / 2;
+
+        ctx.drawImage(img, x, y, size, size, 0, 0, size, size);
+
+        canvas.toBlob(
+          (blob) => {
+            setSelectedImage(blob);
+            setPreviewImage(canvas.toDataURL("image/jpeg"));
+          },
+          "image/jpeg",
+          0.9
+        );
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setPreviewImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,11 +73,40 @@ const CreatePost = ({ post, onClose }) => {
     }
 
     try {
+      let imageUrl = null;
+
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append("file", selectedImage, "image.jpg");
+
+        const token = localStorage.getItem("accessToken");
+
+        if (!token || token === "undefined" || token === "null") {
+          throw new Error(
+            "No valid authenication token found. Please login again."
+          );
+        }
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/upload/post`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        imageUrl = response.data.url;
+        console.log(imageUrl);
+      }
+
       if (post) {
         await updatePost(post.id, content.trim());
       } else {
         await createPost({
           content: content.trim(),
+          imageUrl,
         });
       }
 
@@ -65,6 +145,43 @@ const CreatePost = ({ post, onClose }) => {
             </div>
           </div>
         </div>
+
+        {previewImage && (
+          <div className="relative w-1/2 mx-auto">
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-full rounded-lg object-cover aspect-square"
+            />
+            <button
+              type="button"
+              className="absolute top-2 right-2 p-1 bg-black/50 rounded-full text-white hover:bg-black/70"
+              onClick={removeImage}
+            >
+              <FiX size={20} />
+            </button>
+          </div>
+        )}
+
+        {!post && (
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageSelect}
+            />
+            <button
+              type="button"
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <FiImage size={20} />
+              <span>Add Photo</span>
+            </button>
+          </div>
+        )}
 
         {error && <div className="text-red-500 text-sm">{error}</div>}
 
