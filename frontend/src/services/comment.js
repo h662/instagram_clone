@@ -7,6 +7,11 @@ const commentService = {
     });
     return response.data;
   },
+
+  fetchComments: async (postId) => {
+    const response = await api.get(`/api/comments/posts/${postId}`);
+    return response.data.content;
+  },
 };
 
 export default commentService;

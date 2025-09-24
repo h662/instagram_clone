@@ -10,6 +10,7 @@ const useCommentStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const newComment = await commentService.createComment(postId, content);
+
       set((state) => ({
         comments: [newComment, ...state.comments],
         loading: false,
@@ -18,7 +19,26 @@ const useCommentStore = create((set) => ({
       return newComment;
     } catch (err) {
       set({
-        error: err.response?.data.message || "Failed to create post",
+        error: err.response?.data.message || "Failed to create comment",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  fetchComments: async (postId) => {
+    set({ loading: true, error: null });
+    try {
+      const comments = await commentService.fetchComments(postId);
+      set({
+        comments,
+        loading: false,
+      });
+
+      return comments;
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to fetch comments",
         loading: false,
       });
       throw err;
