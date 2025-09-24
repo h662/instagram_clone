@@ -21,6 +21,11 @@ const postService = {
   deletePost: async (postId) => {
     await api.delete(`/api/posts/${postId}`);
   },
+
+  toggleLike: async (postId) => {
+    const response = await api.post(`/api/posts/${postId}/like`);
+    return response.data;
+  },
 };
 
 export default postService;
