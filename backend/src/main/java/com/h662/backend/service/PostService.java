@@ -6,6 +6,7 @@ import com.h662.backend.entity.Post;
 import com.h662.backend.entity.User;
 import com.h662.backend.exception.ResourceNotFoundException;
 import com.h662.backend.exception.UnauthorizedException;
+import com.h662.backend.repository.CommentRepository;
 import com.h662.backend.repository.LikeRepository;
 import com.h662.backend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final AuthenticationService authenticationService;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     public PostResponse createPost(PostRequest request) {
         User currentUser = authenticationService.getCurrentUser();
@@ -47,9 +49,11 @@ public class PostService {
             PostResponse response = PostResponse.fromEntity(post);
             Long likeCount = likeRepository.countByPostId(post.getId());
             boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+            Long commentCount = commentRepository.countByPostId(post.getId());
 
             response.setLikeCount(likeCount);
             response.setLiked(isLiked);
+            response.setCommentCount(commentCount);
 
             return response;
         });
