@@ -16,6 +16,7 @@ import usePostStore from "../../store/postStore";
 import CreatePost from "./CreatePost";
 import axios from "axios";
 import useLikeStore from "../../store/likeStore";
+import CommentSection from "../comment/CommentSection";
 
 const PostCard = ({ post }) => {
   const { user } = useAuthStore();
@@ -31,6 +32,8 @@ const PostCard = ({ post }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [isLiked, setIsLiked] = useState(post?.liked);
   const [likeCount, setLikeCount] = useState(post?.likeCount);
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(post?.commentCount);
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -177,9 +180,12 @@ const PostCard = ({ post }) => {
                 <span className="text-sm font-medium">{likeCount}</span>
               </button>
 
-              <button className="flex items-center space-x-1 transition-colors text-gray-700 hover:text-blue-500">
+              <button
+                className="flex items-center space-x-1 transition-colors text-gray-700/50 hover:text-blue-500"
+                onClick={() => setShowComments(!showComments)}
+              >
                 <FiMessageCircle size={20} />
-                <span className="text-sm font-medium">000</span>
+                <span className="text-sm font-medium">{commentCount}</span>
               </button>
             </div>
 
@@ -194,6 +200,12 @@ const PostCard = ({ post }) => {
             {post.content}
           </p>
         </div>
+
+        {showComments && (
+          <div className="px-4">
+            <CommentSection post={post} />
+          </div>
+        )}
 
         <div className="px-4 pb-3 pt-2">
           <p className="text-xs text-gray-500">
