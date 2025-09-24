@@ -29,6 +29,8 @@ const PostCard = ({ post }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showUpdatePost, setShowUpdatePost] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [isLiked, setIsLiked] = useState(post?.liked);
+  const [likeCount, setLikeCount] = useState(post?.likeCount);
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -46,7 +48,8 @@ const PostCard = ({ post }) => {
     try {
       const response = await toggleLike(post.id);
 
-      console.log(response);
+      setIsLiked(response.isLiked);
+      setLikeCount(response.likeCount);
     } catch (err) {
       console.error(err);
     }
@@ -158,14 +161,20 @@ const PostCard = ({ post }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                className="flex items-center space-x-1 transition-all duration-200 text-gray-700/50"
+                className={`flex items-center space-x-1 transition-all duration-200 ${
+                  isLiked
+                    ? "text-red-500"
+                    : "text-gray-700/50 hover:text-red-500"
+                }`}
                 onClick={handleLike}
               >
                 <FiHeart
                   size={20}
-                  className="transition-all duration-200 fill-current"
+                  className={`transition-all duration-200 ${
+                    isLiked && "fill-current"
+                  }`}
                 />
-                <span className="text-sm font-medium">000</span>
+                <span className="text-sm font-medium">{likeCount}</span>
               </button>
 
               <button className="flex items-center space-x-1 transition-colors text-gray-700 hover:text-blue-500">
