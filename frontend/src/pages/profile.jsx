@@ -1,55 +1,81 @@
 import { FiArrowLeft, FiBookmark, FiGrid, FiLock } from "react-icons/fi";
 import Avatar from "../components/common/Avatar";
 import useFollowStore from "../store/followStore";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import useUserStore from "../store/userStore";
+import useAuthStore from "../store/authStore";
 
 const Profile = () => {
   const { username } = useParams();
 
   const { followStatus, getFollowStatus } = useFollowStore();
+  const { userProfile, getUserProfile } = useUserStore();
+  const { user: currentUser } = useAuthStore();
+
+  const [currentFollowStatus, setCurrentFollowStatus] = useState();
+
+  const isOwnProfile = currentUser?.username === userProfile?.username;
 
   useEffect(() => {
-    const loadFollowStatus = async () => {
+    const loadUserProfile = async () => {
       try {
-        const status = await getFollowStatus(8);
-        if (status) {
-          console.log(status);
-        }
+        await getUserProfile(username);
       } catch (err) {
         console.error(err);
       }
     };
+    loadUserProfile();
+  }, [getUserProfile]);
+
+  useEffect(() => {
+    const loadFollowStatus = async () => {
+      if (userProfile) {
+        try {
+          setCurrentFollowStatus(await getFollowStatus(userProfile.id));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
     loadFollowStatus();
-  }, [getFollowStatus]);
+  }, [userProfile, getFollowStatus]);
 
   return (
     <div className="bg-gray-50">
       <div className="bg-white min-h-screen max-w-2xl mx-auto">
         <header className="border-b border-gray-300 sticky top-0 z-40">
           <div className="flex items-center justify-between px-4 py-4">
-            <button className="text-gray-700 hover:text-black">
+            <Link className="text-gray-700 hover:text-black" to="/">
               <FiArrowLeft size={24} />
-            </button>
-            <h1 className="font-semibold text-lg">profileUser.username</h1>
+            </Link>
+            <h1 className="font-semibold text-lg">{userProfile?.username}</h1>
             <div className="w-6"></div>
           </div>
         </header>
 
         <div className="p-4 border-b border-gray-300">
           <div className="flex items-start space-x-4">
-            <Avatar size="large" />
+            <Avatar user={userProfile} size="large" />
 
             <div className="flex-1">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-semibold">profileUser.username</h2>
-                <button className="px-4 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
-                  Follow
-                </button>
+                <h2 className="text-xl font-semibold">
+                  {userProfile?.username}
+                </h2>
+                {isOwnProfile ? (
+                  <button className="px-4 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
+                    Edit Profile
+                  </button>
+                ) : (
+                  <button className="px-4 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
+                    Follow
+                  </button>
+                )}
               </div>
 
-              <p className="font-semibold text-sm">profileUser.fullName</p>
-              <p className="text-sm mt-1">profileUser.bio</p>
+              <p className="font-semibold text-sm">{userProfile?.fullName}</p>
+              <p className="text-sm mt-1">{userProfile?.bio}</p>
             </div>
           </div>
         </div>
@@ -60,11 +86,15 @@ const Profile = () => {
             <p className="text-gray-500 text-sm">posts</p>
           </div>
           <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
-            <p className="font-semibold">000</p>
+            <p className="font-semibold">
+              {currentFollowStatus?.followersCount || 0}
+            </p>
             <p className="text-gray-500 text-sm">followers</p>
           </button>
           <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
-            <p className="font-semibold">000</p>
+            <p className="font-semibold">
+              {currentFollowStatus?.followingCount || 0}
+            </p>
             <p className="text-gray-500 text-sm">following</p>
           </button>
         </div>
