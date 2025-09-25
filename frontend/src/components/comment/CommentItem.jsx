@@ -1,6 +1,6 @@
 import Avatar from "../common/Avatar";
 
-const CommentItem = ({ comment }) => {
+const CommentItem = ({ comment, error }) => {
   return (
     <div className="flex space-x-3 py-2">
       <Avatar user={comment.user} size="small" />
@@ -17,7 +17,7 @@ const CommentItem = ({ comment }) => {
           </div>
         </div>
 
-        <div className="text-red-500 text-xs mt-1">error</div>
+        {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
       </div>
     </div>
   );

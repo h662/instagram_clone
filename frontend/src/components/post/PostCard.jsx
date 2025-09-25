@@ -203,7 +203,11 @@ const PostCard = ({ post }) => {
 
         {showComments && (
           <div className="px-4">
-            <CommentSection post={post} />
+            <CommentSection
+              post={post}
+              commentCount={commentCount}
+              setCommentCount={setCommentCount}
+            />
           </div>
         )}
 

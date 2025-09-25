@@ -3,7 +3,7 @@ import useCommentStore from "../../store/commentStore";
 import CommentItem from "./CommentItem";
 
 const CommentList = ({ postId }) => {
-  const { fetchComments, comments } = useCommentStore();
+  const { fetchComments, comments, error } = useCommentStore();
 
   useEffect(() => {
     const getComments = async () => {
@@ -22,7 +22,7 @@ const CommentList = ({ postId }) => {
   return (
     <div>
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} />
+        <CommentItem key={comment.id} comment={comment} error={error} />
       ))}
     </div>
   );

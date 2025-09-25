@@ -2,8 +2,8 @@ import { FiSend } from "react-icons/fi";
 import useCommentStore from "../../store/commentStore";
 import { useState } from "react";
 
-const CommentForm = ({ postId }) => {
-  const { createComment } = useCommentStore();
+const CommentForm = ({ postId, commentCount, setCommentCount }) => {
+  const { createComment, error } = useCommentStore();
 
   const [content, setContent] = useState("");
 
@@ -15,9 +15,10 @@ const CommentForm = ({ postId }) => {
     if (content.length > 500) return;
 
     try {
-      const newComment = await createComment(postId, content);
-      console.log(newComment);
+      await createComment(postId, content);
+
       setContent("");
+      setCommentCount(commentCount + 1);
     } catch (err) {
       console.error(err);
     }
@@ -37,7 +38,7 @@ const CommentForm = ({ postId }) => {
           />
           <div className="flex items-center justify-between mt-1">
             <span className="text-xs text-gray-500">{content.length}/500</span>
-            <span className="text-xs text-red-500">error</span>
+            {error && <span className="text-xs text-red-500">{error}</span>}
           </div>
         </div>
 
