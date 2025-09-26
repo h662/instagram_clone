@@ -9,20 +9,9 @@ const useBookmarkStore = create((set) => ({
   toggleBookmark: async (postId) => {
     set({ loading: true, error: null });
     try {
-      const isBookmarked = await bookmarkService.toggleBookmark(postId);
-      set((state) => ({
-        bookmaredPosts: state.bookmaredPosts.map((p) =>
-          p.id === postId
-            ? {
-                ...p,
-                isBookmarked,
-              }
-            : p
-        ),
-        loading: false,
-      }));
+      const result = await bookmarkService.toggleBookmark(postId);
 
-      return isBookmarked;
+      return result;
     } catch (err) {
       set({
         error: err.response?.data.message || "Failed to toogle bookmark",

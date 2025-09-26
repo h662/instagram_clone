@@ -23,7 +23,7 @@ const PostCard = ({ post }) => {
   const { user } = useAuthStore();
   const { deletePost } = usePostStore();
   const { toggleLike } = useLikeStore();
-  const { getIsBookmarked } = useBookmarkStore();
+  const { toggleBookmark, getIsBookmarked } = useBookmarkStore();
 
   const menuRef = useRef(null);
 
@@ -60,6 +60,12 @@ const PostCard = ({ post }) => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleBookmark = async () => {
+    try {
+      setIsBookmarked(await toggleBookmark(post.id));
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -121,8 +127,6 @@ const PostCard = ({ post }) => {
     };
     loadIsBookmarked();
   }, [post, getIsBookmarked]);
-
-  useEffect(() => console.log(isBookmarked), [isBookmarked]);
 
   return (
     <>
@@ -214,6 +218,7 @@ const PostCard = ({ post }) => {
                   ? "text-gray-900"
                   : "text-gray-700 hover:text-gray-900"
               }`}
+              onClick={handleBookmark}
             >
               <FiBookmark
                 size={20}

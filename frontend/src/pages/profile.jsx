@@ -8,6 +8,7 @@ import useAuthStore from "../store/authStore";
 import usePostStore from "../store/postStore";
 import PostList from "../components/post/PostList";
 import useBookmarkStore from "../store/bookmarkStore";
+import BookmarkCard from "../components/bookmark/BookmarkCard";
 
 const Profile = () => {
   const { username } = useParams();
@@ -200,7 +201,14 @@ const Profile = () => {
           {activeTab === "bookmark" && (
             <>
               {isOwnProfile ? (
-                <div className="flex justify-center">Bookmark List</div>
+                <div className="grid grid-cols-3 gap-1">
+                  {bookmaredPosts?.map((bookmaredPost) => (
+                    <BookmarkCard
+                      key={bookmaredPost.id}
+                      bookmarkedPost={bookmaredPost}
+                    />
+                  ))}
+                </div>
               ) : (
                 <div>
                   <div className="text-center py-12">
