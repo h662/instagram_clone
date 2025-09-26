@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import useAuthStore from "../store/authStore";
 import usePostStore from "../store/postStore";
+import PostList from "../components/post/PostList";
 
 const Profile = () => {
   const { username } = useParams();
@@ -51,6 +52,16 @@ const Profile = () => {
     };
     loadFollowStatus();
   }, [userProfile, getFollowStatus]);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      if (!userProfile) return;
+
+      getUserPosts(0, userProfile.id);
+    };
+
+    loadPosts();
+  }, [userProfile, getUserPosts]);
 
   useEffect(() => {
     const loadUserPostCount = async () => {
@@ -142,6 +153,7 @@ const Profile = () => {
         </div>
 
         <div className="p-4">
+          <PostList posts={userPosts} />
           <div>
             <div className="text-center py-12">
               <FiLock size={40} className="mx-auto mb-2 text-gray-400" />

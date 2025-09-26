@@ -1,20 +1,6 @@
-import { useEffect } from "react";
-import usePostStore from "../../store/postStore";
 import PostCard from "./PostCard";
 
-const PostList = () => {
-  const { posts, fetchPosts } = usePostStore();
-
-  const loadPosts = async () => {
-    fetchPosts();
-  };
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  useEffect(() => console.log(posts), [posts]);
-
+const PostList = ({ posts }) => {
   return (
     <div className="space-y-4">
       {posts.map((post) => (

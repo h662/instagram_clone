@@ -61,9 +61,20 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getUserPosts(Long userId, Pageable pageable) {
-        authenticationService.getCurrentUser();
+        User currentUser = authenticationService.getCurrentUser();
         Page<Post> posts = postRepository.findByUserIdAndNotDeleted(userId, pageable);
-        return posts.map(PostResponse::fromEntity);
+        return posts.map(post -> {
+            PostResponse response = PostResponse.fromEntity(post);
+            Long likeCount = likeRepository.countByPostId(post.getId());
+            boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+            Long commentCount = commentRepository.countByPostId(post.getId());
+
+            response.setLikeCount(likeCount);
+            response.setLiked(isLiked);
+            response.setCommentCount(commentCount);
+
+            return response;
+        });
     }
 
     @Transactional(readOnly = true)
