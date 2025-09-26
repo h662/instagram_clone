@@ -9,13 +9,21 @@ import useAuthStore from "../store/authStore";
 const Profile = () => {
   const { username } = useParams();
 
-  const { followStatus, getFollowStatus } = useFollowStore();
+  const { followStatus, getFollowStatus, toggleFollow } = useFollowStore();
   const { userProfile, getUserProfile } = useUserStore();
   const { user: currentUser } = useAuthStore();
 
-  const [currentFollowStatus, setCurrentFollowStatus] = useState();
-
   const isOwnProfile = currentUser?.username === userProfile?.username;
+
+  const handleFollow = async () => {
+    try {
+      if (!userProfile) return;
+
+      await toggleFollow(userProfile.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -30,16 +38,18 @@ const Profile = () => {
 
   useEffect(() => {
     const loadFollowStatus = async () => {
-      if (userProfile) {
-        try {
-          setCurrentFollowStatus(await getFollowStatus(userProfile.id));
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        if (!userProfile) return;
+
+        await getFollowStatus(userProfile.id);
+      } catch (err) {
+        console.error(err);
       }
     };
     loadFollowStatus();
   }, [userProfile, getFollowStatus]);
+
+  useEffect(() => console.log(followStatus), [followStatus]);
 
   return (
     <div className="bg-gray-50">
@@ -68,8 +78,17 @@ const Profile = () => {
                     Edit Profile
                   </button>
                 ) : (
-                  <button className="px-4 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
-                    Follow
+                  <button
+                    className={`px-4 py-1 border border-gray-300 rounded-md text-sm font-medium transition-colors duration-200 
+                      ${
+                        followStatus?.isFollowing
+                          ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          : "bg-pink-500 text-white hover:bg-pink-600"
+                      }
+                      `}
+                    onClick={handleFollow}
+                  >
+                    {followStatus?.isFollowing ? "Unfollow" : "Follow"}
                   </button>
                 )}
               </div>
@@ -86,15 +105,11 @@ const Profile = () => {
             <p className="text-gray-500 text-sm">posts</p>
           </div>
           <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
-            <p className="font-semibold">
-              {currentFollowStatus?.followersCount || 0}
-            </p>
+            <p className="font-semibold">{followStatus?.followersCount || 0}</p>
             <p className="text-gray-500 text-sm">followers</p>
           </button>
           <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
-            <p className="font-semibold">
-              {currentFollowStatus?.followingCount || 0}
-            </p>
+            <p className="font-semibold">{followStatus?.followingCount || 0}</p>
             <p className="text-gray-500 text-sm">following</p>
           </button>
         </div>

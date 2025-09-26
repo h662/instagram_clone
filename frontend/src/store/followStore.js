@@ -2,9 +2,9 @@ import { create } from "zustand";
 import followService from "../services/follow";
 
 const useFollowStore = create((set) => ({
-  followStatus: {},
-  followers: {},
-  following: {},
+  followStatus: null,
+  followers: null,
+  following: null,
   loading: false,
   error: null,
 
@@ -14,17 +14,14 @@ const useFollowStore = create((set) => ({
       const { following, followersCount, followingCount } =
         await followService.toggleFollow(userId);
 
-      set((state) => ({
+      set({
         followStatus: {
-          ...state.followStatus,
-          [userId]: {
-            isFollowing: following,
-            followersCount,
-            followingCount,
-          },
+          isFollowing: following,
+          followersCount,
+          followingCount,
         },
         loading: false,
-      }));
+      });
 
       return { isFollowing: following, followersCount, followingCount };
     } catch (err) {
@@ -42,17 +39,14 @@ const useFollowStore = create((set) => ({
       const { following, followersCount, followingCount } =
         await followService.getFollowStatus(userId);
 
-      set((state) => ({
+      set({
         followStatus: {
-          ...state.followStatus,
-          [userId]: {
-            isFollowing: following,
-            followersCount,
-            followingCount,
-          },
+          isFollowing: following,
+          followersCount,
+          followingCount,
         },
         loading: false,
-      }));
+      });
 
       return { isFollowing: following, followersCount, followingCount };
     } catch (err) {
