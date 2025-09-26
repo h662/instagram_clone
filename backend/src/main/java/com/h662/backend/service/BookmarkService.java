@@ -24,20 +24,24 @@ public class BookmarkService {
     private final PostRepository postRepository;
     private final AuthenticationService authenticationService;
 
-    public void toggleBookmark(Long postId) {
+    public boolean toggleBookmark(Long postId) {
         User currentUser = authenticationService.getCurrentUser();
         Post post = postRepository.findByIdAndNotDeleted(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
-        bookmarkRepository.findByUserAndPost(currentUser, post)
-                .ifPresentOrElse(
-                        bookmarkRepository::delete,
-                        () -> bookmarkRepository.save(Bookmark.builder()
-                                .user(currentUser)
-                                .post(post)
-                                .build()
-                        )
-                );
+        boolean alreadyBookmarked = bookmarkRepository.existsByUserAndPost(currentUser, post);
+
+        if (alreadyBookmarked) {
+            bookmarkRepository.deleteByUserAndPost(currentUser, post);
+            return false;
+        } else {
+            Bookmark bookmark = Bookmark.builder()
+                    .user(currentUser)
+                    .post(post)
+                    .build();
+            bookmarkRepository.save(bookmark);
+            return true;
+        }
     }
 
     @Transactional(readOnly = true)

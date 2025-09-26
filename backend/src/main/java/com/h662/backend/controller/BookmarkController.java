@@ -17,9 +17,9 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PostMapping("/{postId}")
-    public ResponseEntity<Void> toggleBookmark(@PathVariable Long postId) {
-        bookmarkService.toggleBookmark(postId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> toggleBookmark(@PathVariable Long postId) {
+        boolean bookmarked = bookmarkService.toggleBookmark(postId);
+        return ResponseEntity.ok(bookmarked);
     }
 
     @GetMapping("/{postId}/status")

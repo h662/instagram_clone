@@ -7,6 +7,7 @@ import useUserStore from "../store/userStore";
 import useAuthStore from "../store/authStore";
 import usePostStore from "../store/postStore";
 import PostList from "../components/post/PostList";
+import useBookmarkStore from "../store/bookmarkStore";
 
 const Profile = () => {
   const { username } = useParams();
@@ -16,6 +17,8 @@ const Profile = () => {
   const { user: currentUser } = useAuthStore();
   const { userPosts, userPostCount, getUserPosts, getUserPostCount } =
     usePostStore();
+  const { bookmaredPosts, toggleBookmark, getBookmarkedPosts } =
+    useBookmarkStore();
 
   const [activeTab, setActiveTab] = useState("posts");
 
@@ -78,8 +81,21 @@ const Profile = () => {
     loadUserPostCount();
   }, [userProfile, getUserPostCount]);
 
-  useEffect(() => console.log(activeTab === "posts"), [activeTab]);
-  useEffect(() => console.log(isOwnProfile), [isOwnProfile]);
+  useEffect(() => {
+    const loadBookmarkedPosts = async () => {
+      try {
+        if (!currentUser || activeTab !== "bookmark") return;
+
+        await getBookmarkedPosts();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadBookmarkedPosts();
+  }, [activeTab, currentUser, getBookmarkedPosts]);
+
+  useEffect(() => console.log(bookmaredPosts), [bookmaredPosts]);
 
   return (
     <div className="bg-gray-50">

@@ -6,6 +6,7 @@ import com.h662.backend.entity.Post;
 import com.h662.backend.entity.User;
 import com.h662.backend.exception.ResourceNotFoundException;
 import com.h662.backend.exception.UnauthorizedException;
+import com.h662.backend.repository.BookmarkRepository;
 import com.h662.backend.repository.CommentRepository;
 import com.h662.backend.repository.LikeRepository;
 import com.h662.backend.repository.PostRepository;
@@ -26,6 +27,7 @@ public class PostService {
     private final AuthenticationService authenticationService;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public PostResponse createPost(PostRequest request) {
         User currentUser = authenticationService.getCurrentUser();
@@ -50,10 +52,12 @@ public class PostService {
             Long likeCount = likeRepository.countByPostId(post.getId());
             boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
             Long commentCount = commentRepository.countByPostId(post.getId());
+            boolean isBookmarked = bookmarkRepository.existsByUserAndPost(currentUser, post);
 
             response.setLikeCount(likeCount);
             response.setLiked(isLiked);
             response.setCommentCount(commentCount);
+            response.setBookmarked(isBookmarked);
 
             return response;
         });
@@ -68,10 +72,12 @@ public class PostService {
             Long likeCount = likeRepository.countByPostId(post.getId());
             boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
             Long commentCount = commentRepository.countByPostId(post.getId());
+            boolean isBookmarked = bookmarkRepository.existsByUserAndPost(currentUser, post);
 
             response.setLikeCount(likeCount);
             response.setLiked(isLiked);
             response.setCommentCount(commentCount);
+            response.setBookmarked(isBookmarked);
 
             return response;
         });

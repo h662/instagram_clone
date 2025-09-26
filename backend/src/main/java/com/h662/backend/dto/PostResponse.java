@@ -20,6 +20,7 @@ public class PostResponse {
     private Long likeCount;
     private boolean isLiked;
     private Long commentCount;
+    private boolean isBookmarked;
 
     public static PostResponse fromEntity(Post post) {
         return PostResponse.builder()

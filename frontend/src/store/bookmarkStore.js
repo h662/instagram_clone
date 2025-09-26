@@ -1,0 +1,55 @@
+import { create } from "zustand";
+import bookmarkService from "../services/bookmark";
+
+const useBookmarkStore = create((set) => ({
+  bookmaredPosts: [],
+  loading: false,
+  error: null,
+
+  toggleBookmark: async (postId) => {
+    set({ loading: true, error: null });
+    try {
+      const isBookmarked = await bookmarkService.toggleBookmark(postId);
+      set((state) => ({
+        bookmaredPosts: state.bookmaredPosts.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                isBookmarked,
+              }
+            : p
+        ),
+        loading: false,
+      }));
+
+      return isBookmarked;
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to toogle bookmark",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  getBookmarkedPosts: async () => {
+    set({ loading: true, error: null });
+    try {
+      const content = await bookmarkService.getBookmarkedPosts();
+      set({
+        bookmaredPosts: content,
+        loading: false,
+      });
+
+      return content;
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to get bookmarked posts",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+}));
+
+export default useBookmarkStore;
