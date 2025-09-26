@@ -32,6 +32,21 @@ const useBookmarkStore = create((set) => ({
     }
   },
 
+  getIsBookmarked: async (postId) => {
+    set({ loading: true, error: null });
+    try {
+      const result = await bookmarkService.getIsBookmarked(postId);
+
+      return result;
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to get bookmarked posts",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
   getBookmarkedPosts: async () => {
     set({ loading: true, error: null });
     try {

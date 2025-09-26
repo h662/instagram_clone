@@ -6,7 +6,7 @@ const bookmarkService = {
     return response.data;
   },
 
-  isBookmarked: async (postId) => {
+  getIsBookmarked: async (postId) => {
     const response = await api.get(`/api/bookmarks/${postId}/status`);
     return response.data;
   },
