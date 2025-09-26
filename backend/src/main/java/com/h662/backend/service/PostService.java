@@ -59,6 +59,19 @@ public class PostService {
         });
     }
 
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getUserPosts(Long userId, Pageable pageable) {
+        authenticationService.getCurrentUser();
+        Page<Post> posts = postRepository.findByUserIdAndNotDeleted(userId, pageable);
+        return posts.map(PostResponse::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getUserPostCount(Long userId) {
+        authenticationService.getCurrentUser();
+        return postRepository.countByUserIdAndNotDeleted(userId);
+    }
+
     public PostResponse updatePost(Long postId, PostRequest request) {
         User currentUser = authenticationService.getCurrentUser();
         Post post = postRepository.findByIdAndNotDeleted(postId)

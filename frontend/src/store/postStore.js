@@ -3,6 +3,8 @@ import postService from "../services/post";
 
 const usePostStore = create((set) => ({
   posts: [],
+  userPosts: [],
+  userPostCount: 0,
   loading: false,
   error: null,
 
@@ -23,18 +25,54 @@ const usePostStore = create((set) => ({
     }
   },
 
-  fetchPosts: async (page = 0, refresh = false) => {
+  fetchPosts: async (page = 0) => {
     set({ loading: true, error: null });
     try {
-      const response = await postService.getAllPosts(page);
+      const content = await postService.getAllPosts(page);
 
       set({
-        posts: response.content,
+        posts: content,
         loading: false,
       });
     } catch (err) {
       set({
         error: err.response?.data.message || "Failed to fetch posts",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  getUserPosts: async (page = 0, userId) => {
+    set({ loading: true, error: null });
+    try {
+      const content = await postService.getUserPosts(page, 10, userId);
+
+      set({
+        userPosts: content,
+        loading: false,
+      });
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to get user posts",
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  getUserPostCount: async (userId) => {
+    set({ loading: true, error: null });
+    try {
+      const count = await postService.getUserPostCount(userId);
+
+      set({
+        userPostCount: count,
+        loading: false,
+      });
+    } catch (err) {
+      set({
+        error: err.response?.data.message || "Failed to get user post count",
         loading: false,
       });
       throw err;

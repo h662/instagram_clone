@@ -10,7 +10,19 @@ const postService = {
     const response = await api.get("/api/posts", {
       params: { page, size },
     });
-    return response.data;
+    return response.data.content;
+  },
+
+  getUserPosts: async (page = 0, size = 10, userId) => {
+    const response = await api.get(`/api/posts/user/${userId}`, {
+      params: { page, size },
+    });
+    return response.data.content;
+  },
+
+  getUserPostCount: async (userId) => {
+    const response = await api.get(`/api/posts/user/${userId}/count`);
+    return response.data.count;
   },
 
   updatePost: async (postId, postData) => {
