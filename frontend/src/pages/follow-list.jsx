@@ -4,15 +4,22 @@ import useUserStore from "../store/userStore";
 import api from "../services/api";
 import { FiArrowLeft } from "react-icons/fi";
 import Avatar from "../components/common/Avatar";
+import useAuthStore from "../store/authStore";
+import FollowButton from "../components/follow/FollowButton";
 
 const FollowList = () => {
   const navigate = useNavigate();
   const { username, type } = useParams();
 
   const { userProfile, getUserProfile } = useUserStore();
+  const { user: currentUser } = useAuthStore();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const handleUserClick = (user) => {
+    navigate(`/profile/${user.username}`);
+  };
 
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -108,13 +115,9 @@ const FollowList = () => {
                     </div>
                   </div>
 
-                  {/* {currentUser && currentUser.id !== user.id && (
-                    <FollowButton
-                      userId={user.id}
-                      username={user.username}
-                      size="small"
-                    />
-                  )} */}
+                  {currentUser && currentUser.id !== user.id && (
+                    <FollowButton user={user} />
+                  )}
                 </div>
               ))}
             </div>

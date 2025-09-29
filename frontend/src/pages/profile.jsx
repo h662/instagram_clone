@@ -9,6 +9,7 @@ import usePostStore from "../store/postStore";
 import PostList from "../components/post/PostList";
 import useBookmarkStore from "../store/bookmarkStore";
 import BookmarkCard from "../components/bookmark/BookmarkCard";
+import FollowButton from "../components/follow/FollowButton";
 
 const Profile = () => {
   const { username } = useParams();
@@ -19,22 +20,11 @@ const Profile = () => {
   const { user: currentUser } = useAuthStore();
   const { userPosts, userPostCount, getUserPosts, getUserPostCount } =
     usePostStore();
-  const { bookmaredPosts, toggleBookmark, getBookmarkedPosts } =
-    useBookmarkStore();
+  const { bookmaredPosts, getBookmarkedPosts } = useBookmarkStore();
 
   const [activeTab, setActiveTab] = useState("posts");
 
   const isOwnProfile = currentUser?.username === userProfile?.username;
-
-  const handleFollow = async () => {
-    try {
-      if (!userProfile) return;
-
-      await toggleFollow(userProfile.id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -126,18 +116,7 @@ const Profile = () => {
                     Edit Profile
                   </button>
                 ) : (
-                  <button
-                    className={`px-4 py-1 border border-gray-300 rounded-md text-sm font-medium transition-colors duration-200 
-                      ${
-                        followStatus?.isFollowing
-                          ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          : "bg-pink-500 text-white hover:bg-pink-600"
-                      }
-                      `}
-                    onClick={handleFollow}
-                  >
-                    {followStatus?.isFollowing ? "Unfollow" : "Follow"}
-                  </button>
+                  <FollowButton user={userProfile} />
                 )}
               </div>
 

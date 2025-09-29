@@ -26,7 +26,7 @@ api.interceptors.response.use(
   (response) => response,
   (err) => {
     if (err.response?.status == 401) {
-      // 토큰 삭제
+      StorageService.clearAuth();
       window.location.href = "/login";
     }
     return Promise.reject(TbError404);
