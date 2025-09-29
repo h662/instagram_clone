@@ -2,7 +2,7 @@ import { FiArrowLeft, FiBookmark, FiGrid, FiLock } from "react-icons/fi";
 import Avatar from "../components/common/Avatar";
 import useFollowStore from "../store/followStore";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import useAuthStore from "../store/authStore";
 import usePostStore from "../store/postStore";
@@ -12,6 +12,7 @@ import BookmarkCard from "../components/bookmark/BookmarkCard";
 
 const Profile = () => {
   const { username } = useParams();
+  const navigate = useNavigate();
 
   const { followStatus, getFollowStatus, toggleFollow } = useFollowStore();
   const { userProfile, getUserProfile } = useUserStore();
@@ -151,11 +152,23 @@ const Profile = () => {
             <p className="font-semibold">{userPostCount || 0}</p>
             <p className="text-gray-500 text-sm">posts</p>
           </div>
-          <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
+          <button
+            className="text-center hover:opacity-70 transition-opacity cursor-pointer"
+            onClick={() =>
+              userProfile &&
+              navigate(`/profile/${userProfile.username}/followers`)
+            }
+          >
             <p className="font-semibold">{followStatus?.followersCount || 0}</p>
             <p className="text-gray-500 text-sm">followers</p>
           </button>
-          <button className="text-center hover:opacity-70 transition-opacity cursor-pointer">
+          <button
+            className="text-center hover:opacity-70 transition-opacity cursor-pointer"
+            onClick={() =>
+              userProfile &&
+              navigate(`/profile/${userProfile.username}/following`)
+            }
+          >
             <p className="font-semibold">{followStatus?.followingCount || 0}</p>
             <p className="text-gray-500 text-sm">following</p>
           </button>

@@ -22,7 +22,7 @@ api.interceptors.request.use(
   (err) => Promise.reject(err)
 );
 
-api.interceptors.request.use(
+api.interceptors.response.use(
   (response) => response,
   (err) => {
     if (err.response?.status == 401) {
