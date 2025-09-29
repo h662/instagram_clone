@@ -25,11 +25,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (err) => {
-    if (err.response?.status == 401) {
+    if (err.response?.status === 401) {
       StorageService.clearAuth();
       window.location.href = "/login";
     }
-    return Promise.reject(TbError404);
+    return Promise.reject(err);
   }
 );
 

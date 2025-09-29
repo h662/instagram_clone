@@ -85,13 +85,13 @@ public class JwtService {
             boolean isValid = identifier.equals(String.valueOf(user.getId()))
                     || identifier.equals(user.getUsername());
 
-            return isValid && isTokenExpired(token);
+            return isValid && !isTokenExpired(token);
         }
 
-        return (identifier.equals(userDetails.getUsername())) && isTokenExpired(token);
+        return (identifier.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) { return extractExpiration(token).after(new Date()); }
+    private boolean isTokenExpired(String token) { return extractExpiration(token).before(new Date()); }
 
     private Date extractExpiration(String token) { return extractClaim(token, Claims::getExpiration); }
 
