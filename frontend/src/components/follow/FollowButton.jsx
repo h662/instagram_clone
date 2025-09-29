@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import useFollowStore from "../../store/followStore";
 
 const FollowButton = ({ user }) => {
-  const { followStatus, getFollowStatus, toggleFollow } = useFollowStore();
+  const { getFollowStatus, toggleFollow, getFollowStatusByUserId } = useFollowStore();
+
+  const followStatus = getFollowStatusByUserId(user?.id);
 
   const handleFollow = async () => {
     try {
       if (!user) return;
-
-      console.log(user);
 
       await toggleFollow(user.id);
     } catch (err) {
@@ -27,11 +27,11 @@ const FollowButton = ({ user }) => {
       }
     };
     loadFollowStatus();
-  }, [user, getFollowStatus]);
+  }, [user?.id, getFollowStatus]);
 
   return (
     <button
-      className={`px-4 py-1 border border-gray-300 rounded-md text-sm font-medium transition-colors duration-200 
+      className={`px-4 py-1 border border-gray-300 rounded-md text-sm font-medium transition-colors duration-200
                       ${
                         followStatus?.isFollowing
                           ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
