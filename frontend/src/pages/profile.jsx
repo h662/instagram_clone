@@ -15,7 +15,8 @@ const Profile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
 
-  const { followStatus, getFollowStatus, toggleFollow } = useFollowStore();
+  const { getFollowStatus, toggleFollow, getFollowStatusByUserId } =
+    useFollowStore();
   const { userProfile, getUserProfile } = useUserStore();
   const { user: currentUser } = useAuthStore();
   const { userPosts, userPostCount, getUserPosts, getUserPostCount } =
@@ -25,6 +26,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("posts");
 
   const isOwnProfile = currentUser?.username === userProfile?.username;
+  const followStatus = getFollowStatusByUserId(userProfile?.id);
 
   useEffect(() => {
     const loadUserProfile = async () => {

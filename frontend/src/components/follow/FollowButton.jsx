@@ -2,13 +2,14 @@ import { useEffect } from "react";
 import useFollowStore from "../../store/followStore";
 
 const FollowButton = ({ user }) => {
-  const { followStatus, getFollowStatus, toggleFollow } = useFollowStore();
+  const { getFollowStatus, toggleFollow, getFollowStatusByUserId } =
+    useFollowStore();
+
+  const followStatus = getFollowStatusByUserId(user?.id);
 
   const handleFollow = async () => {
     try {
       if (!user) return;
-
-      console.log(user);
 
       await toggleFollow(user.id);
     } catch (err) {
@@ -28,6 +29,8 @@ const FollowButton = ({ user }) => {
     };
     loadFollowStatus();
   }, [user, getFollowStatus]);
+
+  useEffect(() => console.log(followStatus), [followStatus]);
 
   return (
     <button
